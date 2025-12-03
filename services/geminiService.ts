@@ -299,7 +299,12 @@ export const generateCompositeImage = async (
     shadowIntensity: number
 ): Promise<{ finalImageUrl: string; debugInfo: DebugInfo; }> => {
   console.log('Starting multi-step image generation process...');
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+  
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+      throw new Error("La clave API (API_KEY) no está configurada en las variables de entorno. Por favor configúrala para continuar.");
+  }
+  const ai = new GoogleGenAI({ apiKey });
 
   // Get original scene dimensions for final cropping and correct marker placement
   const { width: originalWidth, height: originalHeight } = await getImageDimensions(environmentImage);
@@ -470,7 +475,12 @@ export const rotateProductImage = async (
     rotationDescription: string
 ): Promise<File> => {
     console.log(`Rotating product to: ${rotationDescription}`);
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+    
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        throw new Error("La clave API (API_KEY) no está configurada en las variables de entorno.");
+    }
+    const ai = new GoogleGenAI({ apiKey });
     
     const MAX_DIMENSION = 1024;
     const resizedProductImage = await resizeImage(productImage, MAX_DIMENSION);
