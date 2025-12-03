@@ -275,6 +275,14 @@ const getShadowDescription = (intensity: number): string => {
     return "very dark and dramatic with high contrast";
 };
 
+// Helper function to safely get and validate the API key
+const getApiKey = (): string => {
+    const apiKey = (process.env.API_KEY || '').trim();
+    if (!apiKey || apiKey === 'undefined') {
+        throw new Error("La clave API (API_KEY) no está configurada. Por favor, asegúrate de añadir tu clave de Gemini en el entorno de despliegue o archivo .env.");
+    }
+    return apiKey;
+}
 
 /**
  * Generates a composite image using a multi-modal AI model.
@@ -300,10 +308,7 @@ export const generateCompositeImage = async (
 ): Promise<{ finalImageUrl: string; debugInfo: DebugInfo; }> => {
   console.log('Starting multi-step image generation process...');
   
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-      throw new Error("La clave API (API_KEY) no está configurada en las variables de entorno. Por favor configúrala para continuar.");
-  }
+  const apiKey = getApiKey();
   const ai = new GoogleGenAI({ apiKey });
 
   // Get original scene dimensions for final cropping and correct marker placement
@@ -476,10 +481,7 @@ export const rotateProductImage = async (
 ): Promise<File> => {
     console.log(`Rotating product to: ${rotationDescription}`);
     
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-        throw new Error("La clave API (API_KEY) no está configurada en las variables de entorno.");
-    }
+    const apiKey = getApiKey();
     const ai = new GoogleGenAI({ apiKey });
     
     const MAX_DIMENSION = 1024;
